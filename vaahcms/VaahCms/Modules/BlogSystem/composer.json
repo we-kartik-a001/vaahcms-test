@@ -1,0 +1,28 @@
+{
+    "name": "vaahcms/blogsystem",
+    "description": "Blog display Site",
+    "version": "0.0.1",
+    "authors": [
+        {
+            "name": "Kartik",
+            "email": "support@vaah.dev"
+        }
+    ],
+    "require": {
+        "php": "^7.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "VaahCms\\Modules\\BlogSystem\\Providers\\BlogSystemServiceProvider"
+            ],
+            "aliases": {
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "VaahCms\\Modules\\BlogSystem\\": ""
+        }
+    }
+}
