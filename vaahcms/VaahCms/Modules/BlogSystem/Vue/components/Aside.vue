@@ -28,10 +28,20 @@ const items = ref([
                 icon: 'fa-regular fa-chart-bar',
                 route: "/"
             },
-             {
+            {
                 label: 'Blogs',
                 icon: 'fa-regular fa-chart-bar',
                 route: "/blogs"
+            },
+            {
+                label: 'Tags',
+                icon: 'fa-regular fa-chart-bar',
+                route: "/tags"
+            },
+            {
+                label: 'Categories',
+                icon: 'fa-regular fa-chart-bar',
+                route: "/categories"
             },
         ]
     },

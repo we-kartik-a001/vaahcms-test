@@ -32,3 +32,6 @@ Route::group(
  * Include CRUD Routes
  */
 include("backend/routes-blogs.php");
+include("backend/routes-tags.php");
+include("backend/routes-categories.php");
+

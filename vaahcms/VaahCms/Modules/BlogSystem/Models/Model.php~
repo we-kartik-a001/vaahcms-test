@@ -10,14 +10,14 @@ use WebReinvent\VaahCms\Traits\CrudWithUuidObservantTrait;
 use WebReinvent\VaahCms\Models\User;
 use WebReinvent\VaahCms\Libraries\VaahSeeder;
 
-class Blog extends VaahModel
+class Category extends VaahModel
 {
 
     use SoftDeletes;
     use CrudWithUuidObservantTrait;
 
     //-------------------------------------------------
-    protected $table = 'bs_blog';
+    protected $table = 'bs_categories';
     //-------------------------------------------------
     protected $dates = [
         'created_at',

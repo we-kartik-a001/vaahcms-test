@@ -21,6 +21,7 @@ class BsBlog extends Migration
 
                 $table->string('name')->nullable()->index();
                 $table->string('slug')->nullable()->index();
+                $table->string('test')->nullable()->index();
                 $table->string('description')->nullable()->index();
                 $table->string('excerpt')->nullable()->index();
                 $table->integer('status_id')->nullable()->index();

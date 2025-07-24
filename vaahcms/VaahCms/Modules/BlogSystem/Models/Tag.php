@@ -9,16 +9,15 @@ use WebReinvent\VaahCms\Models\VaahModel;
 use WebReinvent\VaahCms\Traits\CrudWithUuidObservantTrait;
 use WebReinvent\VaahCms\Models\User;
 use WebReinvent\VaahCms\Libraries\VaahSeeder;
-use WebReinvent\VaahCms\Models\Taxonomy;
 
-class Blog extends VaahModel
+class Tag extends VaahModel
 {
 
     use SoftDeletes;
     use CrudWithUuidObservantTrait;
 
     //-------------------------------------------------
-    protected $table = 'bs_blog';
+    protected $table = 'bs_tags';
     //-------------------------------------------------
     protected $dates = [
         'created_at',
@@ -30,10 +29,6 @@ class Blog extends VaahModel
         'uuid',
         'name',
         'slug',
-        'description',
-        'excerpt',
-        'status_id',
-        'category_id',
         'is_active',
         'created_by',
         'updated_by',
@@ -94,6 +89,13 @@ class Blog extends VaahModel
 
     //-------------------------------------------------
 
+    // Tag are related to many blogs
+    public function blogs()
+    {
+        return $this->belongsToMany(Blog::class, 'bs_blog_tags', 'tag_id', 'blog_id');
+    }
+    //-------------------------------------------------
+
     public function createdByUser()
     {
         return $this->belongsTo(User::class,
@@ -115,35 +117,6 @@ class Blog extends VaahModel
         return $this->belongsTo(User::class,
             'deleted_by', 'id'
         )->select('id', 'uuid', 'first_name', 'last_name', 'email');
-    }
-    
-    //-------------------------------------------------
-
-    // Blog related to taxonomy
-    public function taxonomy()
-    {
-        return $this->belongsTo(Taxonomy::class);
-    }
-    //-------------------------------------------------
-
-    // Blogs are related to many tags
-    public function tags()
-    {
-        return $this->belongsToMany(Tag::class, 'bs_blog_tags', 'blog_id', 'tag_id');
-    }
-    //-------------------------------------------------
-
-    //Blog belongs to a single Category
-    public function category()
-    {
-        return $this->belongsTo(Category::class, 'category_id');
-    }
-
-    //-------------------------------------------------
-    // Seo
-    public function seo()
-    {
-        return $this->morphOne(Seo::class, 'seoable');
     }
 
     //-------------------------------------------------
@@ -213,10 +186,6 @@ class Blog extends VaahModel
         $item = new self();
         $item->fill($inputs);
         $item->save();
-
-        if(isset($inputs['tag_ids']) && is_array($inputs['tag_ids'])) {
-    $item->tags()->sync($inputs['tag_ids']);
-}
 
         $response = self::getItem($item->id);
         $response['messages'][] = trans("vaahcms-general.saved_successfully");

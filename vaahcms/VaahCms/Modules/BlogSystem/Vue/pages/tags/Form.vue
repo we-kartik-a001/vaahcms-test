@@ -1,12 +1,12 @@
 <script setup>
 import {onMounted, ref, watch} from "vue";
-import { useBlogStore } from '../../stores/store-blogs'
+import { useTagStore } from '../../stores/store-tags'
 
 import VhField from './../../vaahvue/vue-three/primeflex/VhField.vue'
 import {useRoute} from 'vue-router';
 
 
-const store = useBlogStore();
+const store = useTagStore();
 const route = useRoute();
 
 onMounted(async () => {
@@ -62,14 +62,14 @@ const toggleFormMenu = (event) => {
                     <Button class="p-button-sm"
                             v-tooltip.left="'View'"
                             v-if="store.item && store.item.id"
-                            data-testid="blogs-view_item"
+                            data-testid="tags-view_item"
                             @click="store.toView(store.item)"
                             icon="pi pi-eye"/>
 
                     <Button label="Save"
                             class="p-button-sm"
                             v-if="store.item && store.item.id"
-                            data-testid="blogs-save"
+                            data-testid="tags-save"
                             @click="store.itemAction('save')"
                             icon="pi pi-save"/>
 
@@ -77,7 +77,7 @@ const toggleFormMenu = (event) => {
                             v-else
                             @click="store.itemAction('create-and-new')"
                             class="p-button-sm"
-                            data-testid="blogs-create-and-new"
+                            data-testid="tags-create-and-new"
                             icon="pi pi-save"/>
 
 
@@ -86,7 +86,7 @@ const toggleFormMenu = (event) => {
                         type="button"
                         @click="toggleFormMenu"
                         class="p-button-sm"
-                        data-testid="blogs-form-menu"
+                        data-testid="tags-form-menu"
                         icon="pi pi-angle-down"
                         aria-haspopup="true"/>
 
@@ -98,7 +98,7 @@ const toggleFormMenu = (event) => {
 
                     <Button class="p-button-primary p-button-sm"
                             icon="pi pi-times"
-                            data-testid="blogs-to-list"
+                            data-testid="tags-to-list"
                             @click="store.toList()">
                     </Button>
                 </div>
@@ -135,13 +135,12 @@ const toggleFormMenu = (event) => {
                 </Message>
 
 
-              <!-- Form:Start -->
                 <VhField label="Name">
                     <div class="p-inputgroup">
                         <InputText class="w-full"
                                    placeholder="Enter the name"
-                                   name="blogs-name"
-                                   data-testid="blogs-name"
+                                   name="tags-name"
+                                   data-testid="tags-name"
                                    @update:modelValue="store.watchItem"
                                    v-model="store.item.name" required/>
                         <div class="required-field hidden"></div>
@@ -152,77 +151,19 @@ const toggleFormMenu = (event) => {
                     <div class="p-inputgroup">
                         <InputText class="w-full"
                                    placeholder="Enter the slug"
-                                   name="blogs-slug"
-                                   data-testid="blogs-slug"
+                                   name="tags-slug"
+                                   data-testid="tags-slug"
                                    v-model="store.item.slug" required/>
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
 
-                <VhField label="Description">
-                    <div class="p-inputgroup">
-                        <InputText class="w-full" 
-                                   placeholder="Enter the Description" 
-                                   name="blogs-description"
-                                   data-testid="blogs-description" 
-                                   v-model="store.item.description" 
-                                   type="description" required />
-                        <div class="required-field hidden"></div>
-                    </div>
-                </VhField>
-
-                <VhField label="Excerpt">
-                    <div class="p-inputgroup">
-                        <InputText class="w-full" 
-                                   placeholder="Enter the Excerpt" 
-                                   name="blogs-excerpt"
-                                   data-testid="blogs-excerpt" 
-                                   v-model="store.item.excerpt" 
-                                   type="excerpt" required />
-                        <div class="required-field hidden"></div>
-                    </div>
-                </VhField>
-
-                <VhField label="Status">
-                    <Dropdown v-model="store.item.status_id" 
-                              :options="store.assets.status || []" 
-                              optionLabel="name"
-                              optionValue="id" 
-                              placeholder="Select a Status" 
-                              class="w-full" />
-                </VhField>
-
-               
-                <VhField label="Category">
-                    <Dropdown v-model="store.item.category_id" 
-                              :options="store.assets.categories || []" 
-                              optionLabel="name"
-                              optionValue="id" 
-                              placeholder="Select a Category" 
-                              class="w-full" />
-                </VhField>
-
-                <VhField label="Tags">
-                    <MultiSelect
-                        v-model="store.item.tag_ids"
-                        :options="store.assets.tags"
-                        optionLabel="name"
-                        optionValue="id"
-                        placeholder="Select Tags"
-                        class="w-full"
-                        display="chip"
-                        data-testid="blogs-tags"
-                    />
-                </VhField>
-
-              <!-- Form:End -->
-
                 <VhField label="Is Active">
                     <InputSwitch v-bind:false-value="0"
                                  v-bind:true-value="1"
                                  class="p-inputswitch-sm"
-                                 name="blogs-active"
-                                 data-testid="blogs-active"
+                                 name="tags-active"
+                                 data-testid="tags-active"
                                  v-model="store.item.is_active"/>
                 </VhField>
 
