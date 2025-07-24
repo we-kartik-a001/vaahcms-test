@@ -34,7 +34,6 @@ class Blog extends VaahModel
         'excerpt',
         'status_id',
         'category_id',
-        'tag_id',
         'is_active',
         'created_by',
         'updated_by',

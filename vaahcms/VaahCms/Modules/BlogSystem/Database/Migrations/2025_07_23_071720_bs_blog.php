@@ -21,11 +21,10 @@ class BsBlog extends Migration
 
                 $table->string('name')->nullable()->index();
                 $table->string('slug')->nullable()->index();
-                $table->text('description')->nullable()->index();
-                $table->text('excerpt')->nullable()->index();
+                $table->string('description')->nullable()->index();
+                $table->string('excerpt')->nullable()->index();
                 $table->integer('status_id')->nullable()->index();
                 $table->integer('category_id')->nullable()->index();
-                $table->integer('tag_id')->nullable()->index();
                 $table->boolean('is_active')->nullable()->index();
 
                 //----common fields

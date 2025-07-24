@@ -65,7 +65,7 @@ export const useBlogStore = defineStore({
         list_create_menu: [],
         item_menu_list: [],
         item_menu_state: null,
-        form_menu_list: []
+        form_menu_list: [],
     }),
     getters: {
 

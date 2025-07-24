@@ -192,6 +192,7 @@ const toggleFormMenu = (event) => {
                               class="w-full" />
                 </VhField>
 
+                {{ typeof(store.item.category_id) }}
                 <VhField label="Category">
                     <Dropdown v-model="store.item.category_id" 
                               :options="store.assets.categories || []" 
@@ -201,6 +202,7 @@ const toggleFormMenu = (event) => {
                               class="w-full" />
                 </VhField>
 
+               {{ typeof(store.item.tag_id) }}
                <VhField label="Tags">
                     <MultiSelect v-model="store.item.tag_id"
                                 :options="store.assets.tags"
