@@ -35,6 +35,7 @@ import Tag from "primevue/tag";
 import Dropdown from 'primevue/dropdown'; 
 import MultiSelect from 'primevue/multiselect';
 import Chips from 'primevue/chips';
+import Textarea from 'primevue/textarea';
 
 //-------------/CRUD PrimeVue Imports
 
@@ -91,7 +92,7 @@ app.component('Tag', Tag);
 app.component('Dropdown', Dropdown);
 app.component('MultiSelect', MultiSelect);
 app.component('Chips', Chips);
-
+app.component('Textarea', Textarea);
 //-------------/CRUD PrimeVue Use
 
 

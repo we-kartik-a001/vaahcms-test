@@ -88,6 +88,11 @@ class Blog extends VaahModel
         }
 
         $empty_item['is_active'] = 1;
+        $empty_item['seo'] = [
+        'seo_title' => '',
+        'seo_description' => '',
+        'seo_metatag' => [],
+        ];
 
         return $empty_item;
     }
@@ -215,8 +220,20 @@ class Blog extends VaahModel
         $item->save();
 
         if(isset($inputs['tag_ids']) && is_array($inputs['tag_ids'])) {
-    $item->tags()->sync($inputs['tag_ids']);
-}
+            $item->tags()->sync($inputs['tag_ids']);
+        }
+
+        //  create seo via relation if provided
+        if (isset($inputs['seo']) && is_array($inputs['seo'])) {
+            $seo = $inputs['seo'];
+
+            // If you cast seo_metatag to array in Seo model, you can pass array directly
+            $item->seo()->create([
+                'seo_title'       => $seo['seo_title'] ?? null,
+                'seo_description' => $seo['seo_description'] ?? null,
+                'seo_metatag'     => $seo['seo_metatag'] ?? [],
+            ]);
+        }
 
         $response = self::getItem($item->id);
         $response['messages'][] = trans("vaahcms-general.saved_successfully");
@@ -491,7 +508,7 @@ class Blog extends VaahModel
     {
 
         $item = self::where('id', $id)
-            ->with(['createdByUser', 'updatedByUser', 'deletedByUser'])
+            ->with(['createdByUser', 'updatedByUser', 'deletedByUser','seo','tags'])
             ->withTrashed()
             ->first();
 
@@ -544,6 +561,25 @@ class Blog extends VaahModel
         $item = self::where('id', $id)->withTrashed()->first();
         $item->fill($inputs);
         $item->save();
+
+        // Add this block to sync tags
+        if(isset($inputs['tag_ids']) && is_array($inputs['tag_ids'])) {
+            $item->tags()->sync($inputs['tag_ids']);
+        }
+
+        // SEO Update (create if not exists)
+        if (isset($inputs['seo']) && is_array($inputs['seo'])) {
+            $seo = $inputs['seo'];
+
+            $item->seo()->updateOrCreate(
+                [],
+                [
+                    'seo_title'       => $seo['seo_title'] ?? null,
+                    'seo_description' => $seo['seo_description'] ?? null,
+                    'seo_metatag'     => $seo['seo_metatag'] ?? [],
+                ]
+            );
+        }
 
         $response = self::getItem($item->id);
         $response['messages'][] = trans("vaahcms-general.saved_successfully");

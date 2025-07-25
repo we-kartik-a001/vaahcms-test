@@ -107,7 +107,6 @@ const toggleFormMenu = (event) => {
 
             </template>
 
-
             <div v-if="store.item" class="mt-2">
 
                 <Message severity="error"
@@ -171,19 +170,27 @@ const toggleFormMenu = (event) => {
                     </div>
                 </VhField>
 
-                <!-- Good: Correct binding to nested SEO object -->
-                <VhField label="SEO Title">
-                <InputText v-model="store.item.seo_title" class="w-full" />
+                <!--SEO Fields -->
+                <VhField label="SEO Title" v-if="store.item.seo">
+                    <InputText v-model="store.item.seo.seo_title"
+                            placeholder="Enter the SEO Title"
+                            class="w-full"
+                            required />
                 </VhField>
 
-                <VhField label="SEO Description">
-                <Textarea v-model="store.item.seo_description" class="w-full" />
+                <VhField label="SEO Description" v-if="store.item.seo">
+                    <Textarea v-model="store.item.seo.seo_description"
+                            placeholder="Enter the SEO Description"
+                            class="w-full"
+                            required />
                 </VhField>
 
-                <VhField label="SEO Metatags">
-                <Chips v-model="store.item.seo_metatag" class="w-full" />
+                <VhField label="SEO Metatags" v-if="store.item.seo">
+                    <Chips v-model="store.item.seo.seo_metatag"
+                        class="w-full"
+                        required />
                 </VhField>
-
+                
                 <!-- /SEO Fields -->
 
                 <VhField label="Is Active">

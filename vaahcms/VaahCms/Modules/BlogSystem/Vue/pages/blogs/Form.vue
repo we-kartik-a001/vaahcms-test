@@ -10,6 +10,7 @@ const store = useBlogStore();
 const route = useRoute();
 
 onMounted(async () => {
+
     /**
      * Fetch the record from the database
      */
@@ -21,6 +22,18 @@ onMounted(async () => {
 
     await store.getFormMenu();
 });
+
+// Watch for tags data and set tag_ids when available
+watch(
+    () => store.item && store.item.tags,
+    (tags) => {
+        if (Array.isArray(tags)) {
+            store.item.tag_ids = tags.map(tag => tag.id);
+        }
+    },
+    { immediate: true }
+);
+
 
 //--------form_menu
 const form_menu = ref();
@@ -205,15 +218,37 @@ const toggleFormMenu = (event) => {
                 <VhField label="Tags">
                     <MultiSelect
                         v-model="store.item.tag_ids"
-                        :options="store.assets.tags"
+                        :options="store.assets.tags || []"
                         optionLabel="name"
                         optionValue="id"
+                        filter
                         placeholder="Select Tags"
-                        class="w-full"
-                        display="chip"
-                        data-testid="blogs-tags"
+                        :maxSelectedLabels="3"
+                        class="w-full md:w-80"
                     />
                 </VhField>
+
+                <!--SEO Fields -->
+                <VhField label="SEO Title" v-if="store.item.seo">
+                    <InputText v-model="store.item.seo.seo_title"
+                            placeholder="Enter the SEO Title"
+                            class="w-full"
+                            required />
+                </VhField>
+
+                <VhField label="SEO Description" v-if="store.item.seo">
+                    <Textarea v-model="store.item.seo.seo_description"
+                            placeholder="Enter the SEO Description"
+                            class="w-full"
+                            required />
+                </VhField>
+
+                <VhField label="SEO Metatags" v-if="store.item.seo">
+                    <Chips v-model="store.item.seo.seo_metatag"
+                        class="w-full"
+                        required />
+                </VhField>
+                <!-- /SEO Fields -->
 
               <!-- Form:End -->
 

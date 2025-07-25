@@ -629,6 +629,14 @@ export const useCategoryStore = defineStore({
         toForm()
         {
             this.item = vaah().clone(this.assets.empty_item);
+            // Safely initialize seo if not set
+            if (!this.item.seo) {
+                this.item.seo = {
+                    seo_title: '',
+                    seo_description: '',
+                    seo_metatag: [],
+                };
+            }
             this.getFormMenu();
             this.$router.push({name: 'categories.form',query:this.query})
         },

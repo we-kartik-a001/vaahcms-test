@@ -28,6 +28,7 @@ class Category extends VaahModel
     protected $fillable = [
         'uuid',
         'name',
+        'description',
         'slug',
         'is_active',
         'created_by',
@@ -83,6 +84,11 @@ class Category extends VaahModel
         }
 
         $empty_item['is_active'] = 1;
+        $empty_item['seo'] = [
+        'seo_title' => '',
+        'seo_description' => '',
+        'seo_metatag' => [],
+        ];
 
         return $empty_item;
     }
@@ -163,7 +169,7 @@ class Category extends VaahModel
     //-------------------------------------------------
     public static function createItem($request)
     {
-      
+     
         $inputs = $request->all();
 
         $validation = self::validation($inputs);
@@ -196,16 +202,15 @@ class Category extends VaahModel
         $item->fill($inputs);
         $item->save();
 
-      if ($request->has('seo_title') || $request->has('seo_description') || $request->has('seo_metatag')) {
-            Seo::Create([
-                'seoable_type' => Blog::class, // or relevant model
-                'seoable_id' => $item->id,
-            ], [
-                'seo_title' => $request->seo_title,
-                'seo_description' => $request->seo_description,
-                'seo_metatag' => $request->seo_metatag,
-                'slug' => $request->slug, // optional
-                'is_active' => 1,
+        //  create seo via relation if provided
+        if (isset($inputs['seo']) && is_array($inputs['seo'])) {
+            $seo = $inputs['seo'];
+
+            // If you cast seo_metatag to array in Seo model, you can pass array directly
+            $item->seo()->create([
+                'seo_title'       => $seo['seo_title'] ?? null,
+                'seo_description' => $seo['seo_description'] ?? null,
+                'seo_metatag'     => $seo['seo_metatag'] ?? [],
             ]);
         }
 
@@ -408,7 +413,16 @@ class Category extends VaahModel
         }
 
         $items_id = collect($inputs['items'])->pluck('id')->toArray();
-        self::whereIn('id', $items_id)->forceDelete();
+        $items = self::withTrashed()->whereIn('id', $items_id)->get();
+
+        foreach ($items as $item) {
+            if ($item->seo()->exists()) {
+                $item->seo()->forceDelete(); 
+            }
+
+            $item->forceDelete(); 
+        }
+
 
         $response['success'] = true;
         $response['data'] = true;
@@ -447,7 +461,15 @@ class Category extends VaahModel
                     ->each->restore();
                 break;
             case 'delete-all':
-                $list->forceDelete();
+                $list->withTrashed()->get()->each(function($item) {
+                    // Delete related SEO
+                    if ($item->seo) {
+                        $item->seo->forceDelete();
+                    }
+
+                    // Force delete the item
+                    $item->forceDelete();
+                });
                 break;
             case 'create-100-records':
             case 'create-1000-records':
@@ -482,7 +504,7 @@ class Category extends VaahModel
     {
 
         $item = self::where('id', $id)
-            ->with(['createdByUser', 'updatedByUser', 'deletedByUser'])
+            ->with(['createdByUser', 'updatedByUser', 'deletedByUser', 'seo' ])
             ->withTrashed()
             ->first();
 
@@ -536,6 +558,20 @@ class Category extends VaahModel
         $item->fill($inputs);
         $item->save();
 
+        // SEO Update (create if not exists)
+        if (isset($inputs['seo']) && is_array($inputs['seo'])) {
+            $seo = $inputs['seo'];
+
+            $item->seo()->updateOrCreate(
+                [],
+                [
+                    'seo_title'       => $seo['seo_title'] ?? null,
+                    'seo_description' => $seo['seo_description'] ?? null,
+                    'seo_metatag'     => $seo['seo_metatag'] ?? [],
+                ]
+            );
+        }
+
         $response = self::getItem($item->id);
         $response['messages'][] = trans("vaahcms-general.saved_successfully");
         return $response;
@@ -549,6 +585,9 @@ class Category extends VaahModel
             $response['success'] = false;
             $response['errors'][] = trans("vaahcms-general.record_does_not_exist");
             return $response;
+        }
+        if ($item->seo) {
+            $item->seo->forceDelete();
         }
         $item->forceDelete();
 
@@ -594,6 +633,11 @@ class Category extends VaahModel
         $rules = array(
             'name' => 'required|max:150',
             'slug' => 'required|max:150',
+            'description' => 'required|string',
+            'seo.seo_title' => 'required|string|max:255',
+            'seo.seo_description' => 'required|string|max:500',
+            'seo.seo_metatag' => 'required|array|min:1',
+            'seo.seo_metatag.*' => 'string|max:255',
         );
 
         $validator = \Validator::make($inputs, $rules);

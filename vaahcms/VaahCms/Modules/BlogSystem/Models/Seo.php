@@ -36,7 +36,7 @@ class Seo extends VaahModel {
 
     //-------------------------------------------------
     protected $casts = [
-        'seo_metatag' => 'array', // ✅ Automatically cast as array
+        'seo_metatag' => 'array', // Automatically cast as array
     ];
 
     //-------------------------------------------------

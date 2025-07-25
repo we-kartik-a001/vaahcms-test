@@ -5,7 +5,6 @@ import {vaah} from '../vaahvue/pinia/vaah'
 
 let model_namespace = 'VaahCms\\Modules\\BlogSystem\\Models\\Blog';
 
-
 let base_url = document.getElementsByTagName('base')[0].getAttribute("href");
 let ajax_url = base_url + "/blogsystem/blogs";
 
@@ -507,6 +506,12 @@ export const useBlogStore = defineStore({
                 Object.keys(data.fill).forEach(function(key) {
                     self.item[key] = data.fill[key];
                 });
+
+               // Fix: use data.fill.tags instead of fill.tags
+                if (Array.isArray(data.fill.tags)) {
+                    this.item.tag_ids = data.fill.tags.map(t => t.id); // for MultiSelect v-model
+                    this.item.tags = data.fill.tags;                   // optional: keep full tag data
+                }
             }
         },
 
@@ -634,6 +639,14 @@ export const useBlogStore = defineStore({
         toForm()
         {
             this.item = vaah().clone(this.assets.empty_item);
+             // Safely initialize seo if not set
+            if (!this.item.seo) {
+                this.item.seo = {
+                    seo_title: '',
+                    seo_description: '',
+                    seo_metatag: [],
+                };
+            }
             this.getFormMenu();
             this.$router.push({name: 'blogs.form',query:this.query})
         },
