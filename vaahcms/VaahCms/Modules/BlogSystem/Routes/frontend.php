@@ -10,6 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+use App\Http\Controllers\Frontend\FrontendController;
+use Illuminate\Support\Facades\Route;
 
 Route::group(
     [
@@ -19,9 +21,10 @@ Route::group(
     ],
     function () {
         //------------------------------------------------
-        /*
+        
         Route::get( '/', 'FrontendController@index' )
         ->name( 'vh.frontend.blogsystem' );
-        */
+        Route::get('/{slug}', 'FrontendController@show')->name('vh.frontend.blogsystem.detail');
+        
         //------------------------------------------------
     });
