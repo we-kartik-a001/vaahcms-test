@@ -5,6 +5,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Faker\Factory;
+use VaahCms\Modules\BlogSystem\Mails\BlogEmailMail;
+use WebReinvent\VaahCms\Libraries\VaahMail;
 use WebReinvent\VaahCms\Models\VaahModel;
 use WebReinvent\VaahCms\Traits\CrudWithUuidObservantTrait;
 use WebReinvent\VaahCms\Models\User;
@@ -183,11 +185,17 @@ class Blog extends VaahModel
         $query->whereBetween('updated_at', [$from, $to]);
     }
 
+
     //-------------------------------------------------
     public static function createItem($request)
     {
 
         $inputs = $request->all();
+        $super_admin = User::whereHas('roles', function($role){
+            $role->where('name','Super Administrator');
+        })->first();
+
+      
 
         $validation = self::validation($inputs);
         if (!$validation['success']) {
@@ -218,6 +226,8 @@ class Blog extends VaahModel
         $item = new self();
         $item->fill($inputs);
         $item->save();
+
+        VaahMail::addInQueue(new BlogEmailMail($item, $super_admin),$super_admin->email);
 
         if(isset($inputs['tag_ids']) && is_array($inputs['tag_ids'])) {
             $item->tags()->sync($inputs['tag_ids']);
