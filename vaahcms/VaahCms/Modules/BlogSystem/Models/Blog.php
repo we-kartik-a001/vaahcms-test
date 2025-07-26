@@ -316,6 +316,29 @@ class Blog extends VaahModel
         }
 
     }
+
+    public function scopeFilterByCategory($query, $filter)
+    {
+        if (!isset($filter['category']) || empty($filter['category'])) {
+            return $query;
+        }
+        // dd($filter);
+        return $query->where('category_id', $filter['category']);
+    }
+
+    public function scopeFilterByTags($query, $filter)
+    {
+        if (!isset($filter['tags']) || empty($filter['tags'])) {
+            return $query;
+        }
+
+        $tags = $filter['tags'];
+
+        return $query->whereHas('tags', function ($q) use ($tags) {
+            $q->whereIn('tag_id', (array) $tags);
+        });
+    }
+
     //-------------------------------------------------
     public function scopeSearchFilter($query, $filter)
     {
@@ -341,6 +364,8 @@ class Blog extends VaahModel
         $list->isActiveFilter($request->filter);
         $list->trashedFilter($request->filter);
         $list->searchFilter($request->filter);
+        $list->filterByCategory($request->filter);
+        $list->filterByTags($request->filter);
 
         $rows = config('vaahcms.per_page');
 
@@ -482,8 +507,23 @@ class Blog extends VaahModel
                 $list->onlyTrashed()->get()
                     ->each->restore();
                 break;
-            case 'delete-all':
-                $list->forceDelete();
+          case 'delete-all':
+                // Get blog IDs from the $list collection
+                $blogIds = $list->pluck('id');
+
+                // Use Eloquent chunking for efficient deletion
+                Blog::with('tags')
+                    ->whereIn('id', $blogIds)
+                    ->chunkById(200, function ($blogs) {
+                        foreach ($blogs as $blog) {
+                            $blog->tags()->detach();  
+                            if ($blog->seo) {
+                                $blog->seo->forceDelete();
+                            }
+                            $blog->forceDelete();   
+                        }
+                    });
+
                 break;
             case 'create-100-records':
             case 'create-1000-records':

@@ -137,6 +137,22 @@ const store = useBlogStore();
 
             </VhFieldVertical>
 
+            <VhFieldVertical>
+
+                <p class="font-semibold">Filter Category</p>
+                <Dropdown v-model="store.query.filter.category" :options="store.assets.categories || []" optionLabel="name"
+                    optionValue="id" placeholder="Select a Category" class="w-full" />
+
+            </VhFieldVertical>
+
+             <VhFieldVertical>
+
+                <p class="font-semibold">Filter Tags</p>
+                <Dropdown v-model="store.query.filter.tags" :options="store.assets.tags || []" optionLabel="name"
+                    optionValue="id" placeholder="Select a Tag" class="w-full" />
+
+            </VhFieldVertical>
+
 
         </Panel>
 

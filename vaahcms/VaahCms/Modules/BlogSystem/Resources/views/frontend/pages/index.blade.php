@@ -110,9 +110,25 @@
     </div>
 
     <footer class="bg-white mt-12">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <p class="text-center text-gray-500 text-sm">&copy; {{ date('Y') }} My Blog. All rights reserved.</p>
-        </div>
-    </footer>
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <form method="POST" action="{{ route('newsletter.subscribe') }}" class="max-w-2xl mx-auto text-center">
+            @csrf
+            <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
+                <input type="email" name="email" required
+                       class="w-full sm:w-2/3 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                       placeholder="Enter your email to subscribe">
+                <button type="submit"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-150 ease-in-out">
+                    Subscribe
+                </button>
+            </div>
+            @if(session('message'))
+                <p class="mt-3 text-sm text-green-600">{{ session('message') }}</p>
+            @endif
+        </form>
+        <p class="mt-6 text-center text-gray-500 text-sm">&copy; {{ date('Y') }} My Blog. All rights reserved.</p>
+    </div>
+</footer>
+
 </body>
 </html> 

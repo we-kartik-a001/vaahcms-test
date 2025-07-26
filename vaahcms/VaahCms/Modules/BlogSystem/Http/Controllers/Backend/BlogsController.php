@@ -41,6 +41,8 @@ class BlogsController extends Controller
             $data['categories'] = Category::select('id', 'name')->get();;
             $data['tags'] = Tag::select('id', 'name')->get();
 
+            
+
             $data['actions'] = [];
 
             $response['success'] = true;
