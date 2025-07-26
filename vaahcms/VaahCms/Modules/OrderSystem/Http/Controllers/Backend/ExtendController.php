@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use VaahCms\Modules\BlogSystem\Models\Blog;
+use VaahCms\Modules\BlogSystem\Models\Category;
+use VaahCms\Modules\BlogSystem\Models\Tag;
 use VaahCms\Modules\OrderSystem\Models\customer;
 use VaahCms\Modules\OrderSystem\Models\order;
 use VaahCms\Modules\OrderSystem\Models\Product;
@@ -63,42 +66,77 @@ class ExtendController extends Controller
     //----------------------------------------------------------
     
 
-   public function getDashboardItems()
-    {
+//    public function getDashboardItems()
+//     {
 
-        $data = array();
+//         $data = array();
 
-        $data['card'] = [
-            "title" => "Order System Details",
-            "list" => [
+//         $data['card'] = [
+//             "title" => "Order System Details",
+//             "list" => [
 
-                 [
-                    "count" => order::count(),
-                    "label" => 'Total Orders',
-                    "icon" => "pi pi-box",
-                    "type" => "success",
+//                  [
+//                     "count" => order::count(),
+//                     "label" => 'Total Orders',
+//                     "icon" => "pi pi-box",
+//                     "type" => "success",
                    
+//                 ],
+
+//                 [
+//                     "count" => Product::count(),
+//                     "label" => 'Total Products',
+//                     "icon" => "pi-shopping-bag",
+//                     "type" => "success",
+//                 ],
+//                 [
+//                     "count" => customer::where('is_active',1)->count(),
+//                     "label" => 'Active Cusomter',
+//                     "icon" => "pi-user",
+//                     "type" => "success",
+//                 ]
+//             ],
+//         ];
+
+//         $response['success'] = true;
+//         $response['data'] = $data;
+//         return $response;
+//     }
+
+        public function getDashboardItems()
+        {
+            $data = array();
+
+            $data['card'] = [
+                "title" => "Blog System Details",
+                "list" => [
+
+                    [
+                        "count" => \VaahCms\Modules\BlogSystem\Models\Blog::count(),
+                        "label" => 'Total Blogs',
+                        "icon" => "pi pi-file",
+                        "type" => "info",
+                    ],
+
+                    [
+                        "count" => \VaahCms\Modules\BlogSystem\Models\Category::count(),
+                        "label" => 'Total Categories',
+                        "icon" => "pi pi-tags",
+                        "type" => "warning",
+                    ],
+
+                    [
+                        "count" => \VaahCms\Modules\BlogSystem\Models\NewsLetter::count(),
+                        "label" => 'Total Subscribers',
+                        "icon" => "pi pi-envelope",
+                        "type" => "success",
+                    ]
                 ],
+            ];
 
-                [
-                    "count" => Product::count(),
-                    "label" => 'Total Products',
-                    "icon" => "pi-shopping-bag",
-                    "type" => "success",
-                ],
-                [
-                    "count" => customer::where('is_active',1)->count(),
-                    "label" => 'Active Cusomter',
-                    "icon" => "pi-user",
-                    "type" => "success",
-                ]
-            ],
-        ];
+            $response['success'] = true;
+            $response['data'] = $data;
 
-        $response['success'] = true;
-        $response['data'] = $data;
-        return $response;
-    }
-
-
+            return $response;
+        }
 }

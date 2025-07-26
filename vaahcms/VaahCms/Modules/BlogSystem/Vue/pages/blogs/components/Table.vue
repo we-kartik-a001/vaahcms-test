@@ -41,6 +41,43 @@ const useVaah = vaah();
 
             </Column>
 
+            <Column field="description" header="Description"
+                    class="overflow-wrap-anywhere"
+                    :sortable="true">
+
+                <template #body="prop">
+                    <Badge v-if="prop.data.deleted_at"
+                           value="Trashed"
+                           severity="danger"></Badge>
+                    {{prop.data.description}}
+                </template>
+
+            </Column>
+
+            <Column field="category" header="Category"
+                    class="overflow-wrap-anywhere">
+
+                <template #body="prop">
+                    <Badge v-if="prop.data.deleted_at"
+                           value="Trashed"
+                           severity="danger"></Badge>
+                    {{prop.data.category.name}}
+                </template>
+
+            </Column>
+
+            <Column field="seo" header="Seo"
+                    class="overflow-wrap-anywhere">
+
+                <template #body="prop">
+                    <Badge v-if="prop.data.deleted_at"
+                           value="Trashed"
+                           severity="danger"></Badge>
+                    {{prop.data.seo.seo_title}}
+                </template>
+
+            </Column>
+
 
                 <Column field="updated_at" header="Updated"
                         v-if="store.isViewLarge()"

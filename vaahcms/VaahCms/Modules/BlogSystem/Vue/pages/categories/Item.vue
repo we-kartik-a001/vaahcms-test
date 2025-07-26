@@ -147,6 +147,17 @@ const toggleItemMenu = (event) => {
                             />
                         </template>
 
+                        <template v-else-if="column === 'seo'">
+                            <VhViewRow label="Seo Meta tags"
+                                       :value="store.item.seo ? store.item.seo.seo_metatag : 'N/A'"
+                                       :can_copy="true"
+                            />
+                             <VhViewRow label="Seo Description"
+                                       :value="store.item.seo ? store.item.seo.seo_description : 'N/A'"
+                                       :can_copy="true"
+                            />
+                        </template>
+
                         <template v-else>
                             <VhViewRow :label="column"
                                        :value="value"

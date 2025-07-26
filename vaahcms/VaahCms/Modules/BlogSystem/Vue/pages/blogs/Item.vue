@@ -4,7 +4,7 @@ import {useRoute} from 'vue-router';
 
 import { useBlogStore } from '../../stores/store-blogs'
 
-// import VhViewRow from '../../vaahvue/vue-three/primeflex/VhViewRow.vue';
+import VhViewRow from '../../vaahvue/vue-three/primeflex/VhViewRow.vue';
 const store = useBlogStore();
 const route = useRoute();
 
@@ -122,7 +122,7 @@ const toggleItemMenu = (event) => {
                     <template v-for="(value, column) in store.item ">
 
                         <template v-if="column === 'created_by' || column === 'updated_by'
-                        || column === 'deleted_by'">
+                        || column === 'deleted_by' || column === 'category_id'">
                         </template>
 
                         <template v-else-if="column === 'id' || column === 'uuid'">
@@ -147,12 +147,33 @@ const toggleItemMenu = (event) => {
                             />
                         </template>
 
+                        <template v-else-if="column === 'seo'">
+                            <VhViewRow label="Seo Meta tags"
+                                       :value="store.item.seo ? store.item.seo.seo_metatag : 'N/A'"
+                                       :can_copy="true"
+                            />
+                            <VhViewRow label="Seo Description"
+                                       :value="store.item.seo ? store.item.seo.seo_description : 'N/A'"
+                                       :can_copy="true"
+                            />
+                        </template>
+
+                        <template v-else-if="column === 'tags'">
+                            <VhViewRow
+                                label="Tags"
+                                :value="store.item.tags && store.item.tags.length
+                                    ? store.item.tags.map(tag => tag.name).join(', ')
+                                    : 'N/A'"
+                                :can_copy="true"
+                            />
+                        </template>
+
+
                         <template v-else>
                             <VhViewRow :label="column"
                                        :value="value"
                                        />
                         </template>
-
 
                     </template>
                     </tbody>

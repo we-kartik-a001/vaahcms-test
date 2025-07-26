@@ -360,7 +360,7 @@ class Blog extends VaahModel
     //-------------------------------------------------
     public static function getList($request)
     {
-        $list = self::getSorted($request->filter);
+        $list = self::getSorted($request->filter)->with('category','tags','seo','taxonomy');
         $list->isActiveFilter($request->filter);
         $list->trashedFilter($request->filter);
         $list->searchFilter($request->filter);
@@ -469,7 +469,20 @@ class Blog extends VaahModel
         }
 
         $items_id = collect($inputs['items'])->pluck('id')->toArray();
-        self::whereIn('id', $items_id)->forceDelete();
+
+        // Delete related SEO and tags
+        $blogs = self::with(['seo', 'tags'])->whereIn('id', $items_id)->get();
+
+        foreach ($blogs as $blog) {
+            if ($blog->seo) {
+                $blog->seo->forceDelete();
+            }
+            $blog->tags()->detach();
+        }
+
+        // Force delete blogs
+        Blog::whereIn('id', $items_id)->forceDelete();
+
 
         $response['success'] = true;
         $response['data'] = true;
@@ -645,6 +658,15 @@ class Blog extends VaahModel
             $response['errors'][] = trans("vaahcms-general.record_does_not_exist");
             return $response;
         }
+
+        // Delete related SEO
+        if ($item->seo) {
+            $item->seo->forceDelete(); 
+        }
+
+        // Detach related tags
+        $item->tags()->detach();
+
         $item->forceDelete();
 
         $response['success'] = true;
@@ -689,6 +711,22 @@ class Blog extends VaahModel
         $rules = array(
             'name' => 'required|max:150',
             'slug' => 'required|max:150',
+            'description' => ['required', 'string'],
+            'excerpt' => ['required', 'string'],
+
+            'status_id' => ['required', 'integer', 'exists:vh_taxonomies,id'],
+            'category_id' => ['required', 'integer', 'exists:bs_categories,id'],
+
+            'tag_ids' => ['nullable', 'array'],
+            'tag_ids.*' => ['integer', 'exists:bs_tags,id'],
+
+            'is_active' => ['required', 'boolean'],
+
+            // SEO Fields 
+            'seo.seo_title' => ['nullable', 'string', 'max:255'],
+            'seo.seo_description' => ['nullable', 'string'],
+            'seo.seo_metatag' => ['nullable', 'array'],
+            'seo.seo_metatag.*' => ['string'],
         );
 
         $validator = \Validator::make($inputs, $rules);

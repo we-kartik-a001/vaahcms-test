@@ -41,6 +41,18 @@ const useVaah = vaah();
 
             </Column>
 
+             <Column field="seo" header="Seo"
+                    class="overflow-wrap-anywhere">
+
+                <template #body="prop">
+                    <Badge v-if="prop.data.deleted_at"
+                           value="Trashed"
+                           severity="danger"></Badge>
+                    {{prop.data.seo.seo_title}}
+                </template>
+
+            </Column>
+
 
                 <Column field="updated_at" header="Updated"
                         v-if="store.isViewLarge()"
