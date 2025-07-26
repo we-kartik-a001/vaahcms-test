@@ -699,6 +699,16 @@ class Category extends VaahModel
 
         $faker = Factory::create();
 
+          $inputs['name'] = $faker->words(3, true); // example: "Modern Web Technology"
+          $inputs['slug'] = \Illuminate\Support\Str::slug($inputs['name']);
+          $inputs['description'] = $faker->paragraph;
+
+          $inputs['seo'] = [
+            'seo_title' => $faker->sentence(6),
+            'seo_description' => $faker->text(300), // max 500
+            'seo_metatag' => [$faker->word, $faker->word, $faker->word],
+          ];
+
         /*
          * You can override the filled variables below this line.
          * You should also return relationship from here

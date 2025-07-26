@@ -127,9 +127,9 @@ class Blog extends VaahModel
     //-------------------------------------------------
 
     // Blog related to taxonomy
-    public function taxonomy()
+    public function status()
     {
-        return $this->belongsTo(Taxonomy::class);
+        return $this->belongsTo(Taxonomy::class, 'status_id', 'id');
     }
     //-------------------------------------------------
 
@@ -360,7 +360,7 @@ class Blog extends VaahModel
     //-------------------------------------------------
     public static function getList($request)
     {
-        $list = self::getSorted($request->filter)->with('category','tags','seo','taxonomy');
+        $list = self::getSorted($request->filter)->with('category','tags','seo','status');
         $list->isActiveFilter($request->filter);
         $list->trashedFilter($request->filter);
         $list->searchFilter($request->filter);
@@ -571,7 +571,7 @@ class Blog extends VaahModel
     {
 
         $item = self::where('id', $id)
-            ->with(['createdByUser', 'updatedByUser', 'deletedByUser','seo','tags'])
+            ->with(['createdByUser', 'updatedByUser', 'deletedByUser','seo','tags', 'status'])
             ->withTrashed()
             ->first();
 
@@ -788,6 +788,25 @@ class Blog extends VaahModel
 
         $faker = Factory::create();
 
+        $inputs['name'] = $faker->sentence(3);
+        $inputs['slug'] = Str::slug($inputs['name']);
+        $inputs['description'] = $faker->paragraph(3);
+        $inputs['excerpt'] = $faker->text(120);
+        $inputs['is_active'] = rand(0, 1);
+
+        // ✅ Dynamically fetch random valid IDs
+        $inputs['status_id'] = Taxonomy::getTaxonomyByType('blog-status')->random()->id;
+
+        // dd($inputs['status_id']);
+        $inputs['category_id'] = Category::inRandomOrder()->value('id');
+        $inputs['tag_ids'] = Tag::inRandomOrder()->pluck('id')->toArray();
+
+        // SEO Fields
+        $inputs['seo'] = [
+            'seo_title' => $faker->sentence,
+            'seo_description' => $faker->text(160),
+            'seo_metatag' => [$faker->word, $faker->word, $faker->word],
+        ];
         /*
          * You can override the filled variables below this line.
          * You should also return relationship from here

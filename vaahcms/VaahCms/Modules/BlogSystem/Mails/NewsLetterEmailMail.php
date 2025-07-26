@@ -29,10 +29,6 @@ class NewsLetterEmailMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Welcome to Our Newsletter')
-                    ->view('blogsystem::emails.newsletteremail')
-                    ->with([
-                        'email' => $this->email,
-                    ]);
+        return $this->view('blogsystem::emails.newsletteremail');
     }
 }
