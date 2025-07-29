@@ -366,6 +366,10 @@ class Blog extends VaahModel
         $list->searchFilter($request->filter);
         $list->filterByCategory($request->filter);
         $list->filterByTags($request->filter);
+        // Filter by customer_id
+        if (isset($request->filter['category_id'])) {
+            $list->where('category_id', $request->filter['category_id']);
+        }
 
         $rows = config('vaahcms.per_page');
 
@@ -724,12 +728,20 @@ class Blog extends VaahModel
 
             // SEO Fields 
             'seo.seo_title' => ['nullable', 'string', 'max:255'],
-            'seo.seo_description' => ['nullable', 'string'],
+            'seo.seo_description' => ['nullable', 'string', "max:400"],
             'seo.seo_metatag' => ['nullable', 'array'],
-            'seo.seo_metatag.*' => ['string'],
+            'seo.seo_metatag.*' => ['string','max:20'],
         );
 
-        $validator = \Validator::make($inputs, $rules);
+        // Custom attribute names
+            $customAttributes = [
+                'seo.seo_title' => 'seo title',
+                'seo.seo_description' => 'seo description',
+                'seo.seo_metatag' => 'seo metatag',
+                'seo.seo_metatag.*' => 'seo metatag value',
+            ];
+
+        $validator = \Validator::make($inputs, $rules,[], $customAttributes);
         if ($validator->fails()) {
             $messages = $validator->errors();
             $response['success'] = false;

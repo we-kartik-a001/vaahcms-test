@@ -21,6 +21,13 @@ onMounted(async () => {
     }
 
     await store.getFormMenu();
+
+     if (!store.item.status_id && store.assets.status?.length) {
+        const draft = store.assets.status.find(s => s.name === 'Draft');
+        if (draft) {
+            store.item.status_id = draft.id;
+        }
+    }
 });
 
 // Watch for tags data and set tag_ids when available
@@ -29,6 +36,40 @@ watch(
     (tags) => {
         if (Array.isArray(tags)) {
             store.item.tag_ids = tags.map(tag => tag.id);
+        }
+    },
+    { immediate: true }
+);
+
+// Watch for status list and set default to 'Draft' if not set
+// Set default status to 'Draft' if not set and available
+watch(
+    () => store.assets.status,
+    (statusList) => {
+        if (
+            Array.isArray(statusList) &&
+            statusList.length &&
+            (!store.item.status_id || store.item.status_id === '')
+        ) {
+            const draft = statusList.find(s => s.name === 'Draft');
+            if (draft) {
+                store.item.status_id = draft.id;
+            }
+        }
+    },
+    { immediate: true }
+);
+
+// Auto-select category if only one exists and not already selected
+watch(
+    () => store.assets.categories,
+    (categories) => {
+        if (
+            Array.isArray(categories) &&
+            categories.length === 1 &&
+            (!store.item.category_id || store.item.category_id === '')
+        ) {
+            store.item.category_id = categories[0].id;
         }
     },
     { immediate: true }
@@ -197,15 +238,16 @@ const toggleFormMenu = (event) => {
                 </VhField>
 
                 <VhField label="Status">
-                    <Dropdown v-model="store.item.status_id" 
-                              :options="store.assets.status || []" 
-                              optionLabel="name"
-                              optionValue="id" 
-                              placeholder="Select a Status" 
-                              class="w-full" />
+                    <Dropdown
+                        v-model="store.item.status_id"
+                        :options="store.assets.status || []"
+                        optionLabel="name"
+                        optionValue="id"
+                        placeholder="Select a Status"
+                        class="w-full"
+                    />
                 </VhField>
-
-               
+                
                 <VhField label="Category">
                     <Dropdown v-model="store.item.category_id" 
                               :options="store.assets.categories || []" 
@@ -244,7 +286,7 @@ const toggleFormMenu = (event) => {
                 </VhField>
 
                 <VhField label="SEO Metatags" v-if="store.item.seo">
-                    <Chips v-model="store.item.seo.seo_metatag"
+                    <Chips v-model="store.item.seo.seo_metatag "
                         class="w-full"
                         required />
                 </VhField>

@@ -28,17 +28,18 @@ const useVaah = vaah();
             <Column field="id" header="ID" :style="{width: '80px'}" :sortable="true">
             </Column>
 
-            <Column field="name" header="Name"
-                    class="overflow-wrap-anywhere"
-                    :sortable="true">
-
+            <Column field="name" header="Name" class="overflow-wrap-anywhere">
                 <template #body="prop">
-                    <Badge v-if="prop.data.deleted_at"
-                           value="Trashed"
-                           severity="danger"></Badge>
-                    {{prop.data.name}}
+                    <div
+                        class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded cursor-pointer inline-block"
+                        @click.prevent="$router.push({
+                            name: 'blogs.index',
+                            query: { filter: { category_id: prop.data.id } }
+                        })"
+                    >
+                        {{ prop.data.name ?? 'Null' }}
+                    </div>
                 </template>
-
             </Column>
 
              <Column field="seo" header="Seo"

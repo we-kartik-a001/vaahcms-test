@@ -310,6 +310,9 @@ class Category extends VaahModel
         $list->isActiveFilter($request->filter);
         $list->trashedFilter($request->filter);
         $list->searchFilter($request->filter);
+        if (!empty($request->filter['id'])) {
+            $list->where('id', $request->filter['id']);
+        }
 
         $rows = config('vaahcms.per_page');
 
@@ -640,7 +643,15 @@ class Category extends VaahModel
             'seo.seo_metatag.*' => 'string|max:255',
         );
 
-        $validator = \Validator::make($inputs, $rules);
+        // Custom attribute names
+            $customAttributes = [
+                'seo.seo_title' => 'seo title',
+                'seo.seo_description' => 'seo description',
+                'seo.seo_metatag' => 'seo metatag',
+                'seo.seo_metatag.*' => 'seo metatag value',
+            ];
+
+        $validator = \Validator::make($inputs, $rules,[], $customAttributes);
         if ($validator->fails()) {
             $messages = $validator->errors();
             $response['success'] = false;

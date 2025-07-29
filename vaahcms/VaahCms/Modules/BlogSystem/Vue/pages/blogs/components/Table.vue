@@ -46,33 +46,30 @@ const useVaah = vaah();
                     :sortable="true">
 
                 <template #body="prop">
-                    <Badge v-if="prop.data.deleted_at"
-                           value="Trashed"
-                           severity="danger"></Badge>
                     {{prop.data.description}}
                 </template>
 
             </Column>
 
-            <Column field="category" header="Category"
-                    class="overflow-wrap-anywhere">
-
+           <Column field="category" header="Category" class="overflow-wrap-anywhere">
                 <template #body="prop">
-                    <Badge v-if="prop.data.deleted_at"
-                           value="Trashed"
-                           severity="danger"></Badge>
-                    {{prop.data.category?.name?? 'Null'}}
+                    <div
+                        class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded cursor-pointer inline-block"
+                        @click.prevent="$router.push({
+                            name: 'categories.index',
+                            query: { filter: { 'id': prop.data.category?.id } }
+                        })"
+                    >
+                        {{ prop.data.category?.name ?? 'Null' }}
+                    </div>
                 </template>
-
             </Column>
+
 
             <Column field="seo" header="Seo"
                     class="overflow-wrap-anywhere">
 
                 <template #body="prop">
-                    <Badge v-if="prop.data.deleted_at"
-                           value="Trashed"
-                           severity="danger"></Badge>
                     {{prop.data.seo.seo_title}}
                 </template>
 

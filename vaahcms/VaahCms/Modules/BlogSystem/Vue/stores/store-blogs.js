@@ -70,6 +70,18 @@ export const useBlogStore = defineStore({
 
     },
     actions: {
+    
+        async setDefaultCategoryIfOnlyOne() {w
+            const categories = this.assets.categories;
+            if (
+                Array.isArray(categories) &&
+                categories.length === 1 &&
+                !this.item.category_id
+            ) {
+                this.item.category_id = categories[0].id;
+            }
+            
+        },
         //---------------------------------------------------------------------
         async onLoad(route)
         {
